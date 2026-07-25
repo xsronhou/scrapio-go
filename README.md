@@ -1,150 +1,149 @@
-# scrapio
+# scrapio-go
 
-Official Python SDK for [Scrapio](https://scrapio.dev) — fetch, crawl, search, and extract structured data from any URL.
+Official Go SDK for [Scrapio](https://scrapio.dev) — fetch, crawl, search, and extract structured data from any URL.
 
 ## Install
 
 ```bash
-pip install scrapio-py
+go get github.com/xsronhou/scrapio-go
 ```
 
-Requires Python 3.9 or later.
+Requires Go 1.21 or later.
 
 ## Quickstart
 
-```python
-from scrapio import ApiClient, FetchRequest
+```go
+package main
 
-client = ApiClient(api_key="YOUR_API_KEY")
+import (
+    "context"
+    "fmt"
 
-result = client.fetch.fetch(FetchRequest(
-    url="https://example.com",
-    output=["markdown"],
-))
+    scrapio "github.com/xsronhou/scrapio-go"
+)
 
-print(result.outputs["markdown"])
+func main() {
+    client := scrapio.NewClient(os.Getenv("SCRAPIO_API_KEY"))
+
+    result, err := client.Fetch.Fetch(context.Background(), &scrapio.FetchRequest{
+        URL:    "https://example.com",
+        Output: []string{"markdown"},
+    })
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println(result.Outputs["markdown"])
+}
 ```
 
 ## Usage
 
 ### Fetch a page
 
-```python
-result = client.fetch.fetch(FetchRequest(
-    url="https://news.ycombinator.com",
-    render_js=True,
-    output=["markdown"],
-))
+```go
+result, err := client.Fetch.Fetch(ctx, &scrapio.FetchRequest{
+    URL:    "https://news.ycombinator.com",
+    Output: []string{"markdown"},
+})
 ```
 
 ### Google Search
 
-```python
-from scrapio import GoogleSearchParams
-
-results = client.google.search(GoogleSearchParams(
-    search="best web scraping API 2025",
-    country_code="us",
-))
-print(results.organic_results)
+```go
+results, err := client.Google.Search(ctx, &scrapio.GoogleSearchParams{
+    Search:      "best web scraping API 2025",
+    CountryCode: "us",
+})
+fmt.Println(results.Results)
 ```
 
 ### Amazon product
 
-```python
-product = client.amazon.get_product("B08N5WRWNW")
-print(product.title, product.price)
+```go
+product, err := client.Amazon.GetProduct(ctx, "B08N5WRWNW")
+fmt.Println(product.Title, product.Price)
 ```
 
 ### Walmart search
 
-```python
-items = client.walmart.search("headphones")
+```go
+items, err := client.Walmart.Search(ctx, "headphones")
 ```
 
-### YouTube transcript
+### YouTube video
 
-```python
-video = client.youtube.get_video("dQw4w9WgXcQ")
+```go
+video, err := client.YouTube.GetVideo(ctx, "dQw4w9WgXcQ")
 ```
 
 ### Browser automation
 
-```python
-result = client.interact.interact({
-    "url": "https://example.com",
-    "actions": [
+```go
+result, err := client.Interact.Interact(ctx, &scrapio.InteractRequest{
+    URL: "https://example.com",
+    Actions: []scrapio.InteractAction{
         {"type": "click", "selector": "#login"},
-        {"type": "type", "selector": "#email", "text": "user@example.com"},
-    ],
+        {"type": "type", "selector": "#email", "value": "user@example.com"},
+    },
 })
 ```
 
 ### Crawl a site
 
-```python
-result = client.crawl.crawl({
-    "seeds": ["https://docs.example.com"],
-    "max_pages": 50,
+```go
+result, err := client.Crawl.Crawl(ctx, &scrapio.CrawlRequest{
+    Seeds:    []string{"https://docs.example.com"},
+    MaxPages: func(i int) *int { return &i }(50),
+    Output:   []string{"markdown"},
 })
+fmt.Println(result.Result.Summary.PagesSucceeded)
 ```
 
 ### Async jobs
 
-```python
-from scrapio import CreateJobRequest
+```go
+job, err := client.Jobs.Create(ctx, &scrapio.CreateJobRequest{
+    JobType: "fetch",
+    Payload: map[string]any{
+        "url":    "https://example.com",
+        "output": []string{"markdown"},
+    },
+})
 
-job = client.jobs.create(CreateJobRequest(
-    job_type="fetch",
-    payload={"url": "https://example.com", "output": ["markdown"]},
-))
-result = client.jobs.wait_for_completion(job.job_id, poll_interval=2.0, timeout=120.0)
-```
-
-### Async client
-
-```python
-import asyncio
-from scrapio import AsyncApiClient, FetchRequest
-
-async def main():
-    async with AsyncApiClient(api_key="YOUR_API_KEY") as client:
-        result = await client.fetch.fetch(FetchRequest(
-            url="https://example.com",
-            output=["markdown"],
-        ))
-        print(result.outputs["markdown"])
-
-asyncio.run(main())
+result, err := client.Jobs.WaitForCompletion(ctx, job.JobID, &scrapio.WaitOptions{
+    PollInterval: 2 * time.Second,
+    Timeout:      2 * time.Minute,
+})
 ```
 
 ## Configuration
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `api_key` | `str` | required | Your API key |
-| `base_url` | `str` | `https://api.scrapio.dev` | Override for local/staging |
-| `timeout` | `float` | `30.0` | Per-request timeout (seconds) |
-| `max_retries` | `int` | `3` | Max retries on 429/503 |
+```go
+client := scrapio.NewClient(
+    "YOUR_API_KEY",
+    scrapio.WithBaseURL("https://api.scrapio.dev"),  // optional override
+    scrapio.WithTimeout(30 * time.Second),           // optional, default 30s
+)
+```
 
 ## Error handling
 
-```python
-from scrapio import (
-    ApiClient, FetchRequest,
-    AuthError, RateLimitError, CreditsExhaustedError, ApiError,
-)
-
-try:
-    client.fetch.fetch(FetchRequest(url="https://example.com"))
-except AuthError:
-    print("Invalid API key")
-except CreditsExhaustedError:
-    print("No credits remaining")
-except RateLimitError:
-    print("Rate limited — back off and retry")
-except ApiError as e:
-    print(f"API error {e.status_code}: {e}")
+```go
+result, err := client.Fetch.Fetch(ctx, &scrapio.FetchRequest{URL: "https://example.com"})
+if err != nil {
+    switch e := err.(type) {
+    case *scrapio.AuthError:
+        fmt.Println("Invalid API key")
+    case *scrapio.CreditsExhaustedError:
+        fmt.Println("No credits remaining")
+    case *scrapio.RateLimitError:
+        fmt.Println("Rate limited — back off and retry")
+    case *scrapio.ScrapioError:
+        fmt.Printf("API error %d: %s\n", e.StatusCode, e.Message)
+    default:
+        fmt.Println("Network error:", err)
+    }
+}
 ```
 
 ## Links
