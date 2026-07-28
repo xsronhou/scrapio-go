@@ -6,10 +6,14 @@ import (
 	"time"
 )
 
+type JobWebhook struct {
+	URL string `json:"url"`
+}
+
 type CreateJobRequest struct {
-	JobType    string         `json:"job_type"`
-	Payload    map[string]any `json:"payload"`
-	WebhookURL string         `json:"webhook_url,omitempty"`
+	Kind    string         `json:"kind"`
+	Input   map[string]any `json:"input"`
+	Webhook *JobWebhook    `json:"webhook,omitempty"`
 }
 
 type Job struct {

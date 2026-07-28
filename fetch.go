@@ -3,20 +3,22 @@ package scrapio
 import "context"
 
 type FetchRequest struct {
-	URL      string         `json:"url"`
-	RenderJS *bool          `json:"render_js,omitempty"`
-	Device   string         `json:"device,omitempty"`
-	Session  *FetchSession  `json:"session,omitempty"`
-	Output   []string       `json:"output,omitempty"`
-	Extract  map[string]any `json:"extract,omitempty"`
-	Actions  []any          `json:"actions,omitempty"`
-	Timeout  *int           `json:"timeout,omitempty"`
-	Proxy    string         `json:"proxy,omitempty"`
-	Country  string         `json:"country,omitempty"`
+	URL       string         `json:"url"`
+	RenderJS  *bool          `json:"render_js,omitempty"`
+	Device    string         `json:"device,omitempty"`
+	Session   *FetchSession  `json:"session,omitempty"`
+	Output    []string       `json:"output,omitempty"`
+	Extract   map[string]any `json:"extract,omitempty"`
+	WaitFor   *FetchWaitFor  `json:"wait_for,omitempty"`
+	TimeoutMs *int           `json:"timeout_ms,omitempty"`
 }
 
 type FetchSession struct {
 	ID string `json:"id"`
+}
+
+type FetchWaitFor struct {
+	NetworkIdle *bool `json:"network_idle,omitempty"`
 }
 
 type FetchResponse struct {

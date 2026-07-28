@@ -103,8 +103,8 @@ fmt.Println(result.Result.Summary.PagesSucceeded)
 
 ```go
 job, err := client.Jobs.Create(ctx, &scrapio.CreateJobRequest{
-    JobType: "fetch",
-    Payload: map[string]any{
+    Kind: "fetch",
+    Input: map[string]any{
         "url":    "https://example.com",
         "output": []string{"markdown"},
     },

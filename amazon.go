@@ -37,8 +37,8 @@ func (r *AmazonResource) GetProduct(ctx context.Context, asin string, country ..
 	return &out, r.h.get(ctx, "/v1/amazon/product", q, &out)
 }
 
-func (r *AmazonResource) Search(ctx context.Context, query string, opts ...AmazonSearchOpts) (*AmazonSearchResponse, error) {
-	q := url.Values{"query": {query}}
+func (r *AmazonResource) Search(ctx context.Context, search string, opts ...AmazonSearchOpts) (*AmazonSearchResponse, error) {
+	q := url.Values{"search": {search}}
 	if len(opts) > 0 {
 		if opts[0].Country != "" {
 			q.Set("country", opts[0].Country)

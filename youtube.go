@@ -29,11 +29,14 @@ func (r *YouTubeResource) GetVideo(ctx context.Context, videoID string) (*YouTub
 	return &out, r.h.get(ctx, "/v1/youtube/videos/"+videoID, nil, &out)
 }
 
-func (r *YouTubeResource) Search(ctx context.Context, query string, opts ...YouTubeSearchOpts) (*YouTubeSearchResponse, error) {
-	q := url.Values{"query": {query}}
+func (r *YouTubeResource) Search(ctx context.Context, search string, opts ...YouTubeSearchOpts) (*YouTubeSearchResponse, error) {
+	q := url.Values{"search": {search}}
 	if len(opts) > 0 {
-		if opts[0].Page > 0 {
-			q.Set("page", fmt.Sprintf("%d", opts[0].Page))
+		if opts[0].StartPage > 0 {
+			q.Set("start_page", fmt.Sprintf("%d", opts[0].StartPage))
+		}
+		if opts[0].EndPage > 0 {
+			q.Set("end_page", fmt.Sprintf("%d", opts[0].EndPage))
 		}
 		if opts[0].Country != "" {
 			q.Set("country", opts[0].Country)
@@ -56,7 +59,8 @@ func (r *YouTubeResource) GetSubtitles(ctx context.Context, videoID string, lang
 }
 
 type YouTubeSearchOpts struct {
-	Page     int
-	Country  string
-	Language string
+	StartPage int
+	EndPage   int
+	Country   string
+	Language  string
 }
