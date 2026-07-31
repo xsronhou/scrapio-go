@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.0
+
+- Add `Airbnb`, `Chatgpt`, `Perplexity`, `Gemini`, `Bing`, `Reddit`, `TikTok`, `Target`, and `AppleAppStore` resources on `Client`.
+- Add `YouTube.GetChannel`.
+
 ## 1.1.1
 
 - Fix `Fetch`, which exposed `Actions`/`Timeout`/`Proxy`/`Country` fields that don't exist on `/v1/fetch` (real fields are `WaitFor`/`TimeoutMs`) -- setting any of them 400'd.

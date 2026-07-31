@@ -5,19 +5,28 @@ import "time"
 
 // Client is the main entry point for the Scrapio API.
 type Client struct {
-	Fetch      *FetchResource
-	Google     *GoogleResource
-	Amazon     *AmazonResource
-	Walmart    *WalmartResource
-	YouTube    *YouTubeResource
-	Jobs       *JobsResource
-	Crawl      *CrawlResource
-	Interact   *InteractResource
-	FastSearch *FastSearchResource
-	Search     *SearchResource
-	Map        *MapResource
-	Booking    *BookingResource
-	Agoda      *AgodaResource
+	Fetch         *FetchResource
+	Google        *GoogleResource
+	Amazon        *AmazonResource
+	Walmart       *WalmartResource
+	YouTube       *YouTubeResource
+	Jobs          *JobsResource
+	Crawl         *CrawlResource
+	Interact      *InteractResource
+	FastSearch    *FastSearchResource
+	Search        *SearchResource
+	Map           *MapResource
+	Booking       *BookingResource
+	Agoda         *AgodaResource
+	Airbnb        *AirbnbResource
+	Chatgpt       *ChatgptResource
+	Perplexity    *PerplexityResource
+	Gemini        *GeminiResource
+	Bing          *BingResource
+	Reddit        *RedditResource
+	TikTok        *TikTokResource
+	Target        *TargetResource
+	AppleAppStore *AppleAppStoreResource
 }
 
 // ClientOption configures the Client.
@@ -46,18 +55,27 @@ func NewClient(apiKey string, opts ...ClientOption) *Client {
 	}
 	h := newHTTPClient(cfg.baseURL, apiKey, cfg.timeout)
 	return &Client{
-		Fetch:      &FetchResource{h},
-		Google:     &GoogleResource{h},
-		Amazon:     &AmazonResource{h},
-		Walmart:    &WalmartResource{h},
-		YouTube:    &YouTubeResource{h},
-		Jobs:       &JobsResource{h},
-		Crawl:      &CrawlResource{h},
-		Interact:   &InteractResource{h},
-		FastSearch: &FastSearchResource{h},
-		Search:     &SearchResource{h},
-		Map:        &MapResource{h},
-		Booking:    &BookingResource{h},
-		Agoda:      &AgodaResource{h},
+		Fetch:         &FetchResource{h},
+		Google:        &GoogleResource{h},
+		Amazon:        &AmazonResource{h},
+		Walmart:       &WalmartResource{h},
+		YouTube:       &YouTubeResource{h},
+		Jobs:          &JobsResource{h},
+		Crawl:         &CrawlResource{h},
+		Interact:      &InteractResource{h},
+		FastSearch:    &FastSearchResource{h},
+		Search:        &SearchResource{h},
+		Map:           &MapResource{h},
+		Booking:       &BookingResource{h},
+		Agoda:         &AgodaResource{h},
+		Airbnb:        &AirbnbResource{h},
+		Chatgpt:       &ChatgptResource{h},
+		Perplexity:    &PerplexityResource{h},
+		Gemini:        &GeminiResource{h},
+		Bing:          &BingResource{h},
+		Reddit:        &RedditResource{h},
+		TikTok:        &TikTokResource{h},
+		Target:        &TargetResource{h},
+		AppleAppStore: &AppleAppStoreResource{h},
 	}
 }

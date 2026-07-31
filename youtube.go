@@ -22,6 +22,39 @@ type YouTubeSubtitleResponse struct {
 	Subtitles []any  `json:"subtitles"`
 }
 
+type YouTubeChannelLink struct {
+	URL   string  `json:"url"`
+	Title *string `json:"title"`
+}
+
+type YouTubeChannelVideo struct {
+	Position   int     `json:"position"`
+	URL        string  `json:"url"`
+	Title      string  `json:"title"`
+	ViewCount  *string `json:"view_count,omitempty"`
+	UploadedAt *string `json:"uploaded_at,omitempty"`
+}
+
+type YouTubeChannel struct {
+	ID               *string               `json:"id"`
+	Name             *string               `json:"name"`
+	Handle           string                `json:"handle"`
+	Description      *string               `json:"description"`
+	AvatarURL        *string               `json:"avatar_url"`
+	Country          *string               `json:"country"`
+	JoinedDate       *string               `json:"joined_date"`
+	SubscriberCount  *string               `json:"subscriber_count"`
+	ViewCount        *string               `json:"view_count"`
+	VideoCount       *int                  `json:"video_count"`
+	Links            []YouTubeChannelLink  `json:"links"`
+	Videos           []YouTubeChannelVideo `json:"videos"`
+}
+
+type YouTubeChannelResponse struct {
+	RequestID string         `json:"request_id"`
+	Channel   YouTubeChannel `json:"channel"`
+}
+
 type YouTubeResource struct{ h *httpClient }
 
 func (r *YouTubeResource) GetVideo(ctx context.Context, videoID string) (*YouTubeVideoResponse, error) {
@@ -56,6 +89,15 @@ func (r *YouTubeResource) GetSubtitles(ctx context.Context, videoID string, lang
 	}
 	var out YouTubeSubtitleResponse
 	return &out, r.h.get(ctx, "/v1/youtube/subtitles", q, &out)
+}
+
+func (r *YouTubeResource) GetChannel(ctx context.Context, handle string, limit ...int) (*YouTubeChannelResponse, error) {
+	q := url.Values{"handle": {handle}}
+	if len(limit) > 0 && limit[0] > 0 {
+		q.Set("limit", fmt.Sprintf("%d", limit[0]))
+	}
+	var out YouTubeChannelResponse
+	return &out, r.h.get(ctx, "/v1/youtube/channel", q, &out)
 }
 
 type YouTubeSearchOpts struct {
